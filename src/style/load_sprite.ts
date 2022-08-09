@@ -8,11 +8,11 @@ import type {RequestManager} from '../util/request_manager';
 import type {Callback} from '../types/callback';
 import type {Cancelable} from '../types/cancelable';
 
-export default function(
-  baseURL: string,
-  requestManager: RequestManager,
-  pixelRatio: number,
-  callback: Callback<{[_: string]: StyleImage}>
+export default function loadSprite(
+    baseURL: string,
+    requestManager: RequestManager,
+    pixelRatio: number,
+    callback: Callback<{[_: string]: StyleImage}>
 ): Cancelable {
     let json: any, image, error;
     const format = pixelRatio > 1 ? '@2x' : '';

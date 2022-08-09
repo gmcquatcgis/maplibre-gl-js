@@ -1,3 +1,5 @@
+// @ts-nocheck
+
 import migrate from './migrate';
 import * as spec from './style-spec';
 import v8 from './reference/v8.json';
@@ -102,7 +104,7 @@ describe('migrate', () => {
         });
         expect(migrated.layers[0].layout['icon-image']).toEqual([
             'match',
-            ['get', 'type' ],
+            ['get', 'type'],
             'park',
             'some-icon',
             ''

@@ -1,4 +1,4 @@
-name: Test Browser
+name: Integration Test - Browser
 
 on:
   push:
@@ -12,6 +12,10 @@ jobs:
     timeout-minutes: 20
     steps:
       - uses: actions/checkout@v2
+      - name: Install fonts-noto-cjk
+        run: |
+          sudo apt-get update
+          sudo apt-get install fonts-noto-cjk
       - name: Use Node.js 16 x64
         uses: actions/setup-node@v2
         with:
@@ -19,15 +23,4 @@ jobs:
           architecture: x64
       - run: npm ci
       - run: npm run build-dev
-      - run: DETECT_CHROMEDRIVER_VERSION=true npm install -g chromedriver
-      - run: npm install -g geckodriver@2.0.4
-      - name: Test Chrome
-        env:
-          SELENIUM_BROWSER: chrome
-          TAP_COLORS: 1
-        run: xvfb-run -s "-ac -screen 0 1280x1024x24" npm run test-browser
-      - name: Test Firefox
-        env:
-          SELENIUM_BROWSER: firefox
-          TAP_COLORS: 1
-        run: xvfb-run -s "-ac -screen 0 1280x1024x24" npm run test-browser
+      - run: xvfb-run -s "-ac -screen 0 1280x1024x24" npm run test-browser

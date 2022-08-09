@@ -1,3 +1,14 @@
+## 16.1.0
+
+### ✨ Features and improvements
+* Update `icon-padding` symbol layout property to support asymmetric padding [#1289](https://github.com/maplibre/maplibre-gl-js/pull/1289)
+
+## 16.0.0
+
+### Breaking changes
+
+* index.js has been renamed to index.cjs to fix the 'is treated as an ES module file' error in node 12+ [#1223](https://github.com/maplibre/maplibre-gl-js/pull/1223)
+
 ## 15.1.0
 
 ### ✨ Features and improvements

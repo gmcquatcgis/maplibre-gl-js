@@ -1,4 +1,4 @@
-name: Test Render
+name: Integration Test - Render
 
 on:
   push:
@@ -19,8 +19,3 @@ jobs:
       - run: npm ci
       - run: npm run build-dev
       - run: xvfb-run -s "-ac -screen 0 1280x1024x24" npm run test-render
-      - uses: actions/upload-artifact@v2
-        if: always()
-        with:
-          name: index.html
-          path: test/integration/render-tests/index.html

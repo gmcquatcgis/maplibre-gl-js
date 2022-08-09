@@ -54,13 +54,13 @@ class ParsingContext {
      * @private
      */
     parse(
-      expr: unknown,
-      index?: number,
-      expectedType?: Type | null,
-      bindings?: Array<[string, Expression]>,
-      options: {
-        typeAnnotation?: 'assert' | 'coerce' | 'omit';
-      } = {}
+        expr: unknown,
+        index?: number,
+        expectedType?: Type | null,
+        bindings?: Array<[string, Expression]>,
+        options: {
+            typeAnnotation?: 'assert' | 'coerce' | 'omit';
+        } = {}
     ): Expression {
         if (index) {
             return this.concat(index, expectedType, bindings)._parse(expr, options);
@@ -69,10 +69,10 @@ class ParsingContext {
     }
 
     _parse(
-      expr: unknown,
-      options: {
-        typeAnnotation?: 'assert' | 'coerce' | 'omit';
-      }
+        expr: unknown,
+        options: {
+            typeAnnotation?: 'assert' | 'coerce' | 'omit';
+        }
     ): Expression {
         if (expr === null || typeof expr === 'string' || typeof expr === 'boolean' || typeof expr === 'number') {
             expr = ['literal', expr];
@@ -119,6 +119,8 @@ class ParsingContext {
                     if ((expected.kind === 'string' || expected.kind === 'number' || expected.kind === 'boolean' || expected.kind === 'object' || expected.kind === 'array') && actual.kind === 'value') {
                         parsed = annotate(parsed, expected, options.typeAnnotation || 'assert');
                     } else if ((expected.kind === 'color' || expected.kind === 'formatted' || expected.kind === 'resolvedImage') && (actual.kind === 'value' || actual.kind === 'string')) {
+                        parsed = annotate(parsed, expected, options.typeAnnotation || 'coerce');
+                    } else if (expected.kind === 'padding' && (actual.kind === 'value' || actual.kind === 'number' || actual.kind === 'array')) {
                         parsed = annotate(parsed, expected, options.typeAnnotation || 'coerce');
                     } else if (this.checkSubtype(expected, actual)) {
                         return null;

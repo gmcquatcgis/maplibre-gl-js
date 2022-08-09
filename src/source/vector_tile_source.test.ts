@@ -5,7 +5,7 @@ import Tile from './tile';
 import {OverscaledTileID} from './tile_id';
 import {Evented} from '../util/evented';
 import {RequestManager} from '../util/request_manager';
-import fixturesSource from '../../test/fixtures/source.json';
+import fixturesSource from '../../test/unit/assets/source.json';
 import {getMockDispatcher, getWrapDispatcher} from '../util/test/util';
 import Map from '../ui/map';
 
@@ -253,7 +253,7 @@ describe('VectorTileSource', () => {
 
         source.on('data', (e) => {
             if (e.sourceDataType === 'metadata') {
-                expect(source.tileBounds.bounds).toEqual({_sw:{lng: -47, lat: -7}, _ne:{lng: -45, lat: 90}});
+                expect(source.tileBounds.bounds).toEqual({_sw: {lng: -47, lat: -7}, _ne: {lng: -45, lat: 90}});
                 done();
             }
         });

@@ -2,8 +2,8 @@ import isBuiltin from 'is-builtin-module';
 import * as rollup from 'rollup';
 import rollupConfig from '../../rollup.config.style-spec';
 import styleSpecPackage from '../../src/style-spec/package.json';
-import * as spec from '../../dist/style-spec/index.js';
-
+import * as spec from '../../dist/style-spec/index.cjs';
+import {importAssertions} from 'acorn-import-assertions';
 /* eslint-disable import/namespace */
 import {RollupOptions} from 'rollup';
 
@@ -11,9 +11,10 @@ describe('@maplibre/maplibre-gl-style-spec npm package', () => {
     test('build plain ES5 bundle in prepublish', async () => {
         jest.spyOn(console, 'warn').mockImplementation(() => {});
         await rollup.rollup({
-            input: './rollup/build/tsc/src/style-spec/style-spec.js',
+            input: './src/style-spec/style-spec.ts',
+            acornInjectPlugins: [importAssertions],
             plugins: [{
-                name: 'tset-checker',
+                name: 'test-checker',
                 resolveId: (id, importer) => {
                     if (
                         /^[\/\.]/.test(id) ||
@@ -31,7 +32,7 @@ describe('@maplibre/maplibre-gl-style-spec npm package', () => {
         }).catch(e => {
             expect(e).toBeFalsy();
         });
-    });
+    }, 40000);
 
     test('exports components directly, not behind `default` - https://github.com/mapbox/mapbox-gl-js/issues/6601', () => {
         // @ts-ignore

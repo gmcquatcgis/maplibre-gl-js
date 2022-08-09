@@ -3,12 +3,22 @@ import {
     getJSON,
     postData,
     getImage,
-    resetImageRequestQueue
+    resetImageRequestQueue,
+    AJAXError
 } from './ajax';
 import config from './config';
 import webpSupported from './webp_supported';
 import {fakeServer, FakeServer} from 'nise';
 import {stubAjaxGetImage} from './test/util';
+
+function readAsText(blob) {
+    return new Promise((resolve, reject) => {
+        const fileReader = new FileReader();
+        fileReader.onload = () => resolve(fileReader.result);
+        fileReader.onerror = () => reject(fileReader.error);
+        fileReader.readAsText(blob);
+    });
+}
 
 describe('ajax', () => {
     let server: FakeServer;
@@ -22,10 +32,15 @@ describe('ajax', () => {
 
     test('getArrayBuffer, 404', done => {
         server.respondWith(request => {
-            request.respond(404, undefined, undefined);
+            request.respond(404, undefined, '404 Not Found');
         });
-        getArrayBuffer({url:''}, (error) => {
-            expect((error as any).status).toBe(404);
+        getArrayBuffer({url: 'http://example.com/test.bin'}, async (error) => {
+            const ajaxError = error as AJAXError;
+            const body = await readAsText(ajaxError.body);
+            expect(ajaxError.status).toBe(404);
+            expect(ajaxError.statusText).toBe('Not Found');
+            expect(ajaxError.url).toBe('http://example.com/test.bin');
+            expect(body).toBe('404 Not Found');
             done();
         });
         server.respond();
@@ -35,7 +50,7 @@ describe('ajax', () => {
         server.respondWith(request => {
             request.respond(200, {'Content-Type': 'application/json'}, '{"foo": "bar"}');
         });
-        getJSON({url:''}, (error, body) => {
+        getJSON({url: ''}, (error, body) => {
             expect(error).toBeFalsy();
             expect(body).toEqual({foo: 'bar'});
             done();
@@ -47,7 +62,7 @@ describe('ajax', () => {
         server.respondWith(request => {
             request.respond(200, {'Content-Type': 'application/json'}, 'how do i even');
         });
-        getJSON({url:''}, (error) => {
+        getJSON({url: ''}, (error) => {
             expect(error).toBeTruthy();
             done();
         });
@@ -56,22 +71,15 @@ describe('ajax', () => {
 
     test('getJSON, 404', done => {
         server.respondWith(request => {
-            request.respond(404, undefined, undefined);
+            request.respond(404, undefined, '404 Not Found');
         });
-        getJSON({url:''}, (error) => {
-            expect((error as any).status).toBe(404);
-            done();
-        });
-        server.respond();
-    });
-
-    test('getJSON, 401: non-Mapbox domain', done => {
-        server.respondWith(request => {
-            request.respond(401, undefined, undefined);
-        });
-        getJSON({url:''}, (error) => {
-            expect((error as any).status).toBe(401);
-            expect(error.message).toBe('Unauthorized');
+        getJSON({url: 'http://example.com/test.json'}, async (error) => {
+            const ajaxError = error as AJAXError;
+            const body = await readAsText(ajaxError.body);
+            expect(ajaxError.status).toBe(404);
+            expect(ajaxError.statusText).toBe('Not Found');
+            expect(ajaxError.url).toBe('http://example.com/test.json');
+            expect(body).toBe('404 Not Found');
             done();
         });
         server.respond();
@@ -81,7 +89,7 @@ describe('ajax', () => {
         server.respondWith(request => {
             request.respond(204, undefined, undefined);
         });
-        postData({url:'api.mapbox.com'}, (error) => {
+        postData({url: 'api.mapbox.com'}, (error) => {
             expect(error).toBeNull();
             done();
         });
@@ -174,13 +182,17 @@ describe('ajax', () => {
     test('getImage uses ImageBitmap when supported', done => {
         resetImageRequestQueue();
 
-        server.respondWith(request => request.respond(200, {'Content-Type': 'image/png'}, ''));
+        server.respondWith(request => request.respond(200, {'Content-Type': 'image/png',
+            'Cache-Control': 'cache',
+            'Expires': 'expires'}, ''));
 
         stubAjaxGetImage(() => Promise.resolve(new ImageBitmap()));
 
-        getImage({url: ''}, (err, img) => {
+        getImage({url: ''}, (err, img, expiry) => {
             if (err) done(err);
             expect(img).toBeInstanceOf(ImageBitmap);
+            expect(expiry.cacheControl).toBe('cache');
+            expect(expiry.expires).toBe('expires');
             done();
         });
 
@@ -190,13 +202,17 @@ describe('ajax', () => {
     test('getImage uses HTMLImageElement when ImageBitmap is not supported', done => {
         resetImageRequestQueue();
 
-        server.respondWith(request => request.respond(200, {'Content-Type': 'image/png'}, ''));
+        server.respondWith(request => request.respond(200, {'Content-Type': 'image/png',
+            'Cache-Control': 'cache',
+            'Expires': 'expires'}, ''));
 
         stubAjaxGetImage(undefined);
 
-        getImage({url: ''}, (err, img) => {
+        getImage({url: ''}, (err, img, expiry) => {
             if (err) done(`get image failed with error ${err.message}`);
             expect(img).toBeInstanceOf(HTMLImageElement);
+            expect(expiry.cacheControl).toBe('cache');
+            expect(expiry.expires).toBe('expires');
             done();
         });
 

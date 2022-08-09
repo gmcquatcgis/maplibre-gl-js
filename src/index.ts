@@ -1,4 +1,3 @@
-/// <reference path="./types/glsl.d.ts" />
 import assert from 'assert';
 import {supported} from '@mapbox/mapbox-gl-supported';
 
@@ -6,8 +5,10 @@ import Map from './ui/map';
 import NavigationControl from './ui/control/navigation_control';
 import GeolocateControl from './ui/control/geolocate_control';
 import AttributionControl from './ui/control/attribution_control';
+import LogoControl from './ui/control/logo_control';
 import ScaleControl from './ui/control/scale_control';
 import FullscreenControl from './ui/control/fullscreen_control';
+import TerrainControl from './ui/control/terrain_control';
 import Popup from './ui/popup';
 import Marker from './ui/marker';
 import Style from './style/style';
@@ -24,8 +25,16 @@ import WorkerPool from './util/worker_pool';
 import {prewarm, clearPrewarmedResources} from './util/global_worker_pool';
 import {clearTileCache} from './util/tile_request_cache';
 import {PerformanceUtils} from './util/performance';
+import {AJAXError} from './util/ajax';
 import type {RequestParameters, ResponseCallback} from './util/ajax';
 import type {Cancelable} from './types/cancelable';
+import GeoJSONSource from './source/geojson_source';
+import CanvasSource from './source/canvas_source';
+import ImageSource from './source/image_source';
+import RasterDEMTileSource from './source/raster_dem_tile_source';
+import RasterTileSource from './source/raster_tile_source';
+import VectorTileSource from './source/vector_tile_source';
+import VideoSource from './source/video_source';
 
 const exported = {
     supported,
@@ -35,8 +44,10 @@ const exported = {
     NavigationControl,
     GeolocateControl,
     AttributionControl,
+    LogoControl,
     ScaleControl,
     FullscreenControl,
+    TerrainControl,
     Popup,
     Marker,
     Style,
@@ -45,7 +56,15 @@ const exported = {
     Point,
     MercatorCoordinate,
     Evented,
+    AJAXError,
     config,
+    CanvasSource,
+    GeoJSONSource,
+    ImageSource,
+    RasterDEMTileSource,
+    RasterTileSource,
+    VectorTileSource,
+    VideoSource,
     /**
      * Initializes resources like WebWorkers that can be shared across maps to lower load
      * times in some situations. `maplibregl.workerUrl` and `maplibregl.workerCount`, if being
@@ -218,19 +237,19 @@ Debug.extend(exported, {isSafari, getPerformanceMetrics: PerformanceUtils.getPer
  * @param {boolean} lazy If set to `true`, mapboxgl will defer loading the plugin until rtl text is encountered,
  *    rtl text will then be rendered only after the plugin finishes loading.
  * @example
- * maplibregl.setRTLTextPlugin('https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-rtl-text/v0.2.0/mapbox-gl-rtl-text.js');
+ * maplibregl.setRTLTextPlugin('https://unpkg.com/@mapbox/mapbox-gl-rtl-text@0.2.3/mapbox-gl-rtl-text.js');
  * @see [Add support for right-to-left scripts](https://maplibre.org/maplibre-gl-js-docs/example/mapbox-gl-rtl-text/)
  */
 
 /**
-  * Gets the map's [RTL text plugin](https://www.mapbox.com/mapbox-gl-js/plugins/#mapbox-gl-rtl-text) status.
-  * The status can be `unavailable` (i.e. not requested or removed), `loading`, `loaded` or `error`.
-  * If the status is `loaded` and the plugin is requested again, an error will be thrown.
-  *
-  * @function getRTLTextPluginStatus
-  * @example
-  * const pluginStatus = maplibregl.getRTLTextPluginStatus();
-  */
+ * Gets the map's [RTL text plugin](https://www.mapbox.com/mapbox-gl-js/plugins/#mapbox-gl-rtl-text) status.
+ * The status can be `unavailable` (i.e. not requested or removed), `loading`, `loaded` or `error`.
+ * If the status is `loaded` and the plugin is requested again, an error will be thrown.
+ *
+ * @function getRTLTextPluginStatus
+ * @example
+ * const pluginStatus = maplibregl.getRTLTextPluginStatus();
+ */
 
 export default exported;
 // canary assert: used to confirm that asserts have been removed from production build

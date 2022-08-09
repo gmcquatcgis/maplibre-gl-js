@@ -48,9 +48,20 @@ jobs:
 
       - name: Build
         run: |
-          npm run build-prod-min
+          npm run build-prod
+          npm run build-csp
+          npm run build-dev
           npm run build-css
           npm run build-benchmarks
+          npm run generate-typings
+
+      - name: Empty postinstall.js
+        run: |
+          echo "// empty in published package" > postinstall.js
+
+      - name: Write dist/package.json
+        run: |
+          echo "{ \"type\": \"commonjs\", \"name\": \"maplibre-gl\" }" > dist/package.json
 
       - name: Create Archive
         run: |
@@ -114,8 +125,8 @@ jobs:
       - name: Copy benchmarks_generated.js
         run: |
           mkdir tmp
-          cp bench/versions/benchmarks_generated.js tmp
-          cp bench/versions/benchmarks_generated.js.map tmp
+          cp test/bench/versions/benchmarks_generated.js tmp
+          cp test/bench/versions/benchmarks_generated.js.map tmp
 
       - name: Upload Benchmarks to GitHub Pages
         uses: peaceiris/actions-gh-pages@v3

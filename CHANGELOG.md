@@ -1,14 +1,146 @@
 ## main
 
-### Features and improvements
+### ✨ Features and improvements
 
 - *...Add new stuff here...*
+- Update `icon-padding` symbol layout property to support asymmetric padding (#1289)
+- Added `cooperativeGestures` option when instantiating map to prevent inadvertent scrolling/panning when navigating a page where map is embedded inline (#234)
+- Improve filter specification typings (#1390)
+- Add internal support for Node 18 (#1431)
 
 ### 🐞 Bug fixes
 
+- *...Add new stuff here...*
+- Fix compact attribution style when using global CSS that sets `box-sizing: border-box;` (#1250)
+
+## 2.2.0-pre.3
+
+### 🐞 Bug fixes
+
+- Handle maxBounds which cross the meridian at longitude ±180° (#1298, #1299)
+- Hide arrow displayed in default `summary` styles on the attribution control (#1258)
+- Fix memory usage in terrain 3D (#1291, #1302)
+- Fix disappearence of closest tiles when 3D terrain is enabled (#1241, #1300)
+
+## 2.2.0-pre.2
+
+### ✨ Features and improvements
+
+- Add 3D terrain capabilities  (#165, #1022)
+
+## 2.2.0-pre.1
+
+### ✨ Features and improvements
+
+- Cancel pending GeoJSON requests when `GeoJSONSource.setData()` is called instead of waiting for any pending request to complete before issuing the request for the new URL (#1102)
+
+## 2.1.9
+
+### 🐞 Bug fixes
+
+- Add back typescript typings to dependencies instead of devDependencies (#1178)
+
+## 2.1.8
+
+### ✨ Features and improvements
+
+- Changed logic for showing the Maplibre logo. The Maplibre logo is now shown by setting the map option 'maplibreLogo' to true or by adding it to a map with addControl. TileJSON no longer controls if the logo is shown. (#786)
+
+### 🐞 Bug fixes
+
+- Fix missing `touchmove` in `MapTouchEvent["type"]` (#1131)
+- Type CustomLayerInterface renderingMode, onRemove, onAdd, and prerender optional (#1122)
+
+## 2.1.8-pre.3
+
+### 🐞 Bug fixes
+
+- Use correct location for mouse events of line layer with line-offset (#1108).
+- Change `GeoJSONFeature.properties` type from `{}` to `{ [name: string]: any; }` (#1115).
+- Fix `error TS2503: Cannot find namespace 'GeoJSON'` (#1096).
+
+## 2.1.8-pre.2
+
+### ✨ Features and improvements
+- Removal of the unminified production build target, so `npm run build-prod` will be the main build command going forward.
+### 🐞 Bug fixes
+
+- Dispose source resources on map style removal, it also fixes `cannot read properties of undefined (reading 'sourceCaches')` error (#1099).
+- Add MapGeoJSONFeature type as replacement for MapboxGeoJSONFeature. MapGeoJSONFeature type extends GeoJSONFeature type with layer, source, sourceLayer, and state properties (#1104).
+- Fix automatic refreshing of expired raster tiles (#1106)
+- Fix precision loss in some matrix calculations (#1105)
+
+## 2.1.8-pre.1
+
+### ✨ Features and improvements
+
+- Add option `viewport-glyph` to `text-rotation-alignment` which places glyphs along a linestring and rotates them to the x-axis of the viewport (#716).
+
+### 🐞 Bug fixes
+
+- Change `GeoJSONFeature.id` type from `number | string | void` to `number | string | undefined` (#1093)
+- Add FeatureIdentifier type to define feature parameter in setFeatureState, removeFeatureState, and getFeatureState methods. Change FeatureIdentifier.id from `id: string | number;` to `id?: string | number | undefined;` (#1095)
+- Change map.on, map.off, and map.once type parameter from "type: MapEvent" to "type: MapEvent | string" (#1094)
+
+## 2.1.7
+
+### 🐞 Bug fixes
+
+- Add adjustment for glyph rendering, CJK fonts are mainly affected (#1002).
+- Improve typings to fix Angular strict mode failure (#790, #970, #934)
+- Fix `SourceCache.loaded()` always returning `true` following a load error (#1025)
+- Added back csp and dev builds to npm package (#1042)
+
+## 2.1.6
+
+### 🐞 Bug fixes
+
+- Publish `dist/package.json` (#998).
+
+## 2.1.6-pre.1
+
+### 🐞 Bug fixes
+
+- Publish `dist/package.json` (#998).
+
+## 2.1.5
+
+### 🐞 Bug fixes
+
+- Publish empty `postinstall.js` file. Follow-up on (#990), (#991), (#992).
+
+## 2.1.5-pre.1
+
+### 🐞 Bug fixes
+
+- Publish empty `postinstall.js` file. Follow-up on (#990), (#991), (#992).
+
+## 2.1.4
+
+### 🐞 Bug fixes
+
+- Fix missing `postinstall.js` file in npm publish. Follow-up on (#990), (#991).
+
+## 2.1.3
+
+### 🐞 Bug fixes
+
+- Fix postinstall `ts-node` error on non-dev installs (#900)
+
+## 2.1.2
+
+### Features and improvements
+
+- Default compact attribution to be open by default to comply with OpenSteetMap Attribution Guidelines (#795)
+- Export `Source` classes (`GeoJSONSource` etc.) declarations. (#801)
+- Make `AJAXError` public so error HTTP responses can be handled differently from other errors.
+
+### 🐞 Bug fixes
+
+- Fix compact attribution button showing when attribution is blank (#795)
 - Fix error mismatched image size for CJK characters (#718)
 - Fire `dataabort` and `sourcedataabort` events when a tile request is aborted (#794)
-- *...Add new stuff here...*
+- Fix NextJs `performance` undefined (#768)
 
 ## 2.1.1
 
